@@ -26,22 +26,22 @@ function useImpersonation(
   const [actor, setActor] = React.useState<Actor>();
   React.useEffect(() => {
     async function generateAndSetToken() {
-      //   if (typeof actorId === "string") {
-      const res = await fetch("/generateActorToken", {
-        method: "POST",
-        body: JSON.stringify({
-          user_id: "user_2aqE3TWuC03FDFTEpwXc2QySvqu", // The ID of who you want to impersonate
-          actor: {
-            sub: "user_2dYLl8lKOwT0moWQCehalJGbv1f", // The ID of who is impersonating
-          },
-        }),
-      });
+      if (typeof actorId === "string" && typeof userId === "string") {
+        const res = await fetch("/generateActorToken", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: userId, // The ID of who you want to impersonate
+            actor: {
+              sub: actorId, // The ID of who is impersonating
+            },
+          }),
+        });
 
-      const data = await res.json();
+        const data = await res.json();
 
-      setActor(data);
+        setActor(data);
+      }
     }
-    // }
 
     generateAndSetToken();
   }, []);
@@ -123,7 +123,7 @@ export default function Page() {
 
   const onSignOutPress = async (sessionId: string) => {
     try {
-      if (isLoaded && sessions && sessions?.length > 0) {
+      if (isLoaded && sessions && sessions?.length > 1) {
         const noActiveSessions = sessions.filter(
           (session) => session.user?.id !== user?.id
         );
